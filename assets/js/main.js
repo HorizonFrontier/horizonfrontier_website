@@ -75,17 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     
     // Active Navigation Link Highlighter
-     const currentLocation = window.location.pathname.split('/').pop();
-     const navLinks = document.querySelectorAll('.nav-link');
-     
-     navLinks.forEach(link => {
-         const linkPath = link.getAttribute('href').split('/').pop();
-         if ((currentLocation === '' || currentLocation === 'index.html') && (linkPath === '' || linkPath === 'index.html')) {
-             link.classList.add('active');
-         } else if (linkPath === currentLocation && linkPath !== '' && linkPath !== 'index.html') {
-             link.classList.add('active');
-         }
-     });
+    const currentLocation = window.location.pathname.split('/').pop();
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const linkPath = link.getAttribute('href').split('/').pop();
+        // Remove .html from linkPath for comparison if present
+        const cleanLinkPath = linkPath.replace('.html', '');
+        const cleanCurrentLocation = currentLocation.replace('.html', '');
+
+        if ((cleanCurrentLocation === '' || cleanCurrentLocation === 'index') && (cleanLinkPath === '' || cleanLinkPath === 'index')) {
+            link.classList.add('active');
+        } else if (cleanLinkPath === cleanCurrentLocation && cleanLinkPath !== '' && cleanLinkPath !== 'index') {
+            link.classList.add('active');
+        }
+    });
 
     // Year for footer
     const yearSpan = document.getElementById('year');
