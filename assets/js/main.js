@@ -33,6 +33,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Scroll Logic for Sticky Header
+    const header = document.querySelector('.global-header');
+    if (header) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    }
+
     // Mobile Navigation Toggle
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navMenu = document.querySelector('.nav-menu');
@@ -41,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileMenuToggle.addEventListener('click', () => {
             navMenu.classList.toggle('is-active');
             mobileMenuToggle.classList.toggle('is-active');
+            body.classList.toggle('no-scroll');
         });
     }
 
@@ -75,19 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
     
     // Active Navigation Link Highlighter
-    const currentLocation = window.location.pathname.split('/').pop();
+    const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href').split('/').pop();
-        // Remove .html from linkPath for comparison if present
-        const cleanLinkPath = linkPath.replace('.html', '');
-        const cleanCurrentLocation = currentLocation.replace('.html', '');
-
-        if ((cleanCurrentLocation === '' || cleanCurrentLocation === 'index') && (cleanLinkPath === '' || cleanLinkPath === 'index')) {
-            link.classList.add('active');
-        } else if (cleanLinkPath === cleanCurrentLocation && cleanLinkPath !== '' && cleanLinkPath !== 'index') {
-            link.classList.add('active');
+        link.classList.remove('active');
+        const href = link.getAttribute('href');
+        
+        // Handle home link
+        if (href === '/' || href === './' || href === '../') {
+            if (currentPath === '/' || currentPath.endsWith('index.html')) {
+                const isRootIndex = currentPath === '/' || currentPath === '/index.html';
+                // Only add active to home if we are actually at the root
+                if (isRootIndex) link.classList.add('active');
+            }
+        } else {
+            // Check for other pages
+            const cleanHref = href.replace('../', '').replace('./', '');
+            if (cleanHref && currentPath.includes(cleanHref)) {
+                link.classList.add('active');
+            }
         }
     });
 
